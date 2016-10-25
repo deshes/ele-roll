@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>谁去拿外卖</title>
+	<style>
+		.fetchtakeout-dialog{
+			width: 360px;
+			position: fixed;
+			border:1px solid gray;
+			background: #fff;
+			font-size: 12px;
+			border-radius: 5px;
+		}
+		*,:after,:before{
+			box-sizing: inherit;
+		}
+		body{
+			font: 400 1em/1.5 PingFang SC,Lantinghei SC,Helvetica Neue,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+		}
+		h1, h2, h3, h4, h5, h6 {
+		    font-family: PingFang SC,Lantinghei SC,Helvetica Neue,Microsoft Yahei,Hiragino Sans GB,Microsoft Sans Serif,WenQuanYi Micro Hei,sans;
+		    font-weight: 400;
+		}
+		.fetchtakeout-dialog-header{
+			padding: 10px;
+			border-bottom: 1px solid #eee;
+		}
+		.fetchtakeout-close{
+			display: inline-block;
+			float: right;
+			width: 16px;
+			line-height: 24px;
+			text-align: center;
+			color: #ccc;
+		}
+		.icon-close:before {
+		    content: "\e90f";
+		}
+		.fetchtakeout-dialog-header h3 {
+		    font-size: 16px;
+		}
+		.fetchtakeout-dialog-body{
+			padding: 15px;
+		}
+		.fetchtakeout-wrapper{
+			position: relative;
+			margin: 0 auto 10px;
+			padding-top: 15px;
+			width: 300px;
+			color: #555;
+			box-shadow: 1px 1px 2px #ddd;
+			background-color: #dbf0fa;
+
+
+		}
+		.fetchtakeout-badge{
+			display: block;
+			width: 186px;
+			height: 188px;
+			margin: 0 auto;
+			background: url(https://faas.elemecdn.com/desktop/media/img/fetch-takeout-sprites.2c51a3.png) 0 -120px no-repeat;;
+		}
+		.fetchtakeout-btn{
+			display: block;
+			cursor: pointer;
+			margin: -45px auto 15px;
+			width: 271px;
+			height: 40px;
+			border: 0;
+			background: url(https://faas.elemecdn.com/desktop/media/img/fetch-takeout-sprites.2c51a3.png) no-repeat;;
+		}
+		button,input{
+			line-height: normal;
+		}
+		.fetchtakeout-rules{
+			position: relative;
+			margin-bottom: 10px;
+			text-align: center;
+			color: #777;
+			background: #dbf0fa;
+			overflow: hidden;
+		}		
+		.fetchtakeout-rules:after {
+		    left: auto !important;
+		    right: 15px;
+		}
+		.fetchtakeout-rules:after, .fetchtakeout-rules:before{
+		    content: '';
+		    position: absolute;
+		    left: 15px;
+		    top: 5px;
+		    display: block;
+		    height: 7px;
+		    width: 40px;
+		    background-color: #ccc;
+		}
+		.fetchtakeout-btn:hover {
+		    background-position: 0 -40px;
+		}
+		.fetchtakeout-emptytext{
+			position: absolute;
+			bottom: 40px;
+			right: 0;
+			font-size: 73px;
+			line-height: 1em;
+			color: #fff;
+		}
+		.fetchtakeout-list{
+			margin: 0 10px;
+			padding: 5px;
+			height: 180px;
+			list-style:none;
+
+		}
+		ol,ul{
+			list-style: none;
+		}
+		.fetchtakeout-wrapper .selected{
+			color: #fe5a23;
+			font-weight: 700;
+			background: url(https://faas.elemecdn.com/desktop/media/img/fetch-takeout-sprites.2c51a3.png) 0 -320px no-repeat;
+			height: 19px;
+			line-height: 19px;
+		}
+		.fetchtakeout-list li{
+			padding-left: 3px;
+			height: 18px;
+		}
+	</style>
+</head>
+<body>
+	<div class="fetchtakeout-dialog ng-scope" style="left:299px;top:50px;z-index:1001;">
+		<div class="fetchtakeout-dialog-header">
+			<a href="JavaScript:" class="fetchtakeout-close icon-close" ng-click="hide()"></a>
+			<h3>谁去拿外卖</h3>
+		</div>
+		<div class="fetchtakeout-dialog-body">
+			<div class="fetchtakeout-wrapper">
+				<h2 class="fetchtakeout-badge"></h2>
+				<button class="fetchtakeout-btn"></button>
+				<div class="fetchtakeout-rules">
+					随机到最小数字的人去拿外卖
+				</div>
+				<div class="fetchtakeout-emptytext" ng-show="diceList.lenth === 0 ">↓Start</div>
+				<ul class="fetchtakeout-list">
+					<!-- <li ng-repeat="intm in dicelist track by &index" ng-class="{'selected':item === minDice}" class="ng-bingding ng-scope ">扔出了一个 32</li>
+					<li ng-repeat="intm in dicelist track by &index" ng-class="{'selected':item === minDice}" class="ng-bingding ng-scope selected">扔出了一个 31</li> -->
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script>
+		window.onload = function(){
+			//alert("页面加载完成");
+			var min = 0;
+			var btn = document.querySelector('.fetchtakeout-btn');
+			btn.addEventListener('click',function(){
+				// 得到随机数
+				var num = parseInt(Math.random()*100);//获取随机数的方法
+				document.querySelector('.fetchtakeout-emptytext').innerHTML="";
+				// 将生成的随机数字符串放到HTML上
+				var list = document.querySelector('.fetchtakeout-list'); 
+
+				var oLi = document.createElement("li");
+				
+				
+				// 将为人民服务样式放到最小的数字上 
+				if (min==0) {
+					min=num;
+					var message= "扔出了一个"+num;
+					oLi.className=".ng-bingding ng-scope selected";
+				}
+				else{
+					if(num<min){
+						min = num ;
+						var message= "扔出了一个"+num;
+						
+						var lastSelectElement=document.querySelector('.selected');
+						if(lastSelectElement){
+							lastSelectElement.className="";
+						}
+						oLi.className = "ng-bingding ng-scope selected";
+					} else{
+
+						var message= "扔出了一个"+num;
+				 	}	
+				}
+				oLi.appendChild(document.createTextNode(message));
+				list.appendChild(oLi);
+			},false);
+			window.addEventListener('keydown',function(e){
+				var code = e.keyCode;
+				if (code=="32") {
+					btn.click();
+				}
+				
+			},false)
+		}
+	</script>
+</body>
+</html>
